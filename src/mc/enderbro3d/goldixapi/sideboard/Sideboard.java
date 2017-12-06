@@ -21,10 +21,10 @@ public class Sideboard {
     private String title;
     private String name;
 
-    private Consumer<Player> timerUpdateAction;
+    private Runnable timerUpdateAction;
     private BiConsumer<SideboardSection<String>, Player> initAction;
 
-    public static final int SIDEBAR_POSITION = 0;
+    public static final int SIDEBAR_POSITION = 1;
 
     private static ConcurrentHashMap<Sideboard, Set<Player>> visibles = new ConcurrentHashMap<>();
 
@@ -52,6 +52,7 @@ public class Sideboard {
             BukkitRunnable r = new BukkitRunnable() {
                 @Override
                 public void run() {
+                    timerUpdateAction.run();
                     updateSideboard();
                 }
             };
@@ -86,10 +87,10 @@ public class Sideboard {
 
     /**
      * Устанавливает функцию, которая выполняется во время обновления по расписанию
-     * @param timerUpdateAction функция
+     * @param r функция
      */
-    public void setTimerUpdateAction(Consumer<Player> timerUpdateAction) {
-        this.timerUpdateAction = timerUpdateAction;
+    public void setTimerUpdateAction(Runnable r) {
+        this.timerUpdateAction = r;
     }
 
     /**
