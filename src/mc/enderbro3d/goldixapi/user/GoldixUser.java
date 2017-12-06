@@ -1,9 +1,9 @@
 package mc.enderbro3d.goldixapi.user;
 
 import mc.enderbro3d.goldixapi.data.Data;
+import mc.enderbro3d.goldixapi.data.types.EverywhereValueType;
+import mc.enderbro3d.goldixapi.data.types.KeyType;
 import mc.enderbro3d.goldixapi.data.values.Value;
-import mc.enderbro3d.goldixapi.data.types.GameType;
-import mc.enderbro3d.goldixapi.data.types.GlobalValueType;
 import mc.enderbro3d.goldixapi.services.languages.Language;
 import org.bukkit.entity.Player;
 
@@ -19,28 +19,27 @@ public class GoldixUser implements User {
     public GoldixUser(String name) {
         this.name = name;
         data = new Data(name);
-        data.load(false);
     }
 
 
     @Override
     public Language getLanguage() {
-        return Language.getLanguage(data.getData(GameType.GLOBAL, GlobalValueType.LANG).integerValue());
+        return Language.getLanguage(data.getData(KeyType.EVERYWHERE, EverywhereValueType.LANG).integerValue());
     }
 
     @Override
     public void load() {
-        data.load(true);
+        data.load();
     }
 
     @Override
     public void setLanguage(Language language) {
-        data.setData(GameType.GLOBAL, GlobalValueType.LANG, new Value(language.getID()));
+        data.setData(KeyType.EVERYWHERE, EverywhereValueType.LANG, new Value(language.getID()));
     }
 
     @Override
     public UserGroup getGroup() {
-        return UserGroup.getGroup(data.getData(GameType.GLOBAL, GlobalValueType.GROUP).stringValue());
+        return UserGroup.getGroup(data.getData(KeyType.EVERYWHERE, EverywhereValueType.GROUP).stringValue());
     }
 
     @Override
@@ -55,12 +54,12 @@ public class GoldixUser implements User {
 
     @Override
     public void save() {
-        data.save(true);
+        data.save();
     }
 
     @Override
     public void setGroup(UserGroup group) {
-        data.setData(GameType.GLOBAL, GlobalValueType.GROUP, new Value(group.getName()));
+        data.setData(KeyType.EVERYWHERE, EverywhereValueType.GROUP, new Value(group.getName()));
     }
 
     @Override

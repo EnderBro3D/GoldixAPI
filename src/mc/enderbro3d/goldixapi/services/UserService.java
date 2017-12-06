@@ -1,5 +1,6 @@
 package mc.enderbro3d.goldixapi.services;
 
+import mc.enderbro3d.goldixapi.data.Data;
 import mc.enderbro3d.goldixapi.events.AbstractEventListener;
 import mc.enderbro3d.goldixapi.CustomPermissible;
 import mc.enderbro3d.goldixapi.user.GoldixUser;
@@ -16,7 +17,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Map;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
+
 public class UserService implements Service {
 
     private Listener userListener;
@@ -26,13 +32,44 @@ public class UserService implements Service {
         users.put(user.getName().toLowerCase(), user);
     }
 
-    public static void injectPlayer(String s) {
-        User user = new GoldixUser(s);
-        addUser(user);
+    public static void loadAsynchronousData(User u, Consumer<Data> load) {
+        try {
+            Callable<Data> data = () -> {
+                u.load();
+                return u.getData();
+            };
+
+            load.accept(Executors.newSingleThreadExecutor()
+                    .submit(data).get());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void loadSynchronousData(User u, Consumer<Data> load) {
+        u.load();
+        load.accept(u.getData());
+    }
+
+    public static void saveSynchronousData(User u) {
+        u.save();
+    }
+
+    public static void saveAsynchronousData(User u) {
+        try {
+            Runnable r = u::save;
+            Executors.newSingleThreadExecutor()
+                    .execute(r);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void injectPlayer(Player p) {
-        injectPlayer(p.getName());
+        User user = new GoldixUser(p);
+        addUser(user);
+
+        loadAsynchronousData(user, (data) -> new CustomPermissible(user).inject(p));
     }
 
     public static void removeUser(String s) {
@@ -63,14 +100,10 @@ public class UserService implements Service {
 
         userListener = new AbstractEventListener() {
             @EventHandler
-            public void on(AsyncPlayerPreLoginEvent e) {
-                injectPlayer(e.getName());
+            public void on(PlayerLoginEvent e) {
+                injectPlayer(e.getPlayer());
             }
 
-            @EventHandler
-            public void on(PlayerLoginEvent e) {
-                new CustomPermissible(getUser(e.getPlayer().getName())).inject(e.getPlayer());
-            }
 
             @EventHandler
             public void on(PlayerQuitEvent e) {
