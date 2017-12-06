@@ -77,6 +77,11 @@ public class WorldUtil {
         });
     }
 
+    /**
+     * Обновляет выделение игрока
+     * @param p Игрок
+     * @param onUpdate Вызывается, когда обновление закончилось
+     */
     public static void updateBlocks(Player p, BiConsumer<Set<Block>, int[]> onUpdate) {
         Runnable r = () -> {
             if (selectedPos.containsKey(p)) {
@@ -127,6 +132,13 @@ public class WorldUtil {
         };
         Executors.newSingleThreadExecutor().execute(r);
     }
+
+
+    /**
+     * Заменяет выделенные блоки игрока на m
+     * @param p Игрок
+     * @param m Материал блока
+     */
     public static void replaceSelected(Player p, Material m) {
         updateBlocks(p, (blocks, l) -> {
             p.sendMessage("§aWorldEditor §8| §fЗамена " + blocks.size() + " блоков");
@@ -134,26 +146,43 @@ public class WorldUtil {
         });
     }
 
+    /**
+     * Возвращает все выделенные блоки игрока
+     * @param p Игрок
+     * @return Выделенные блоки
+     */
     public static Set<Block> getSelectedBlocks(Player p) {
         return selectedBlocks.get(p);
     }
 
+    /**
+     * Очищает выделение игрока
+     * @param p Игрок
+     */
     public static void removeSelection(Player p) {
         selectedPos.remove(p);
         selectedBlocks.remove(p);
     }
 
+    /**
+     * Очищает все выделения
+     */
     public static void clearAll() {
         selectedBlocks.clear();
         selectedPos.clear();
     }
 
+    /**
+     * Возвращает выделение игрока
+     * @param p Игрок
+     * @return Выделение
+     */
     public static Selection getSelection(Player p) {
         return selectedPos.get(p);
     }
 
     static {
-        AbstractEventListener e = new AbstractEventListener() {
+        new AbstractEventListener() {
             @EventHandler
             public void on(PlayerQuitEvent e) {
                 removeSelection(e.getPlayer());
