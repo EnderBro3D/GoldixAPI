@@ -1,9 +1,27 @@
 package mc.enderbro3d.goldixapi.user;
 
 import mc.enderbro3d.goldixapi.data.Data;
-import mc.enderbro3d.goldixapi.statistics.UserGroup;
+import mc.enderbro3d.goldixapi.services.languages.Language;
 
 public interface User {
+
+
+    /**
+     * Возвращает язык
+     * @return Язык
+     */
+    public Language getLanguage();
+
+
+    /**
+     * Загружает данные
+     */
+    public void load();
+
+    /**
+     * Устанавливает язык
+     */
+    public void setLanguage(Language language);
 
     /**
      * Возвращает группу

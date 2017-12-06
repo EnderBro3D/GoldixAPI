@@ -29,11 +29,11 @@ public class SideboardSection<T> {
         this.display = display;
     }
 
-    public void addLine(int position, SideboardLine line) {
+    public void addLine(int position, SideboardLine<T> line) {
         setLine(position, line);
     }
 
-    public void addLine(SideboardLine line) {
+    public void addLine(SideboardLine<T> line) {
         setLine(lastIndex(), line);
     }
 

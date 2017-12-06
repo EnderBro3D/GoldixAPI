@@ -1,4 +1,4 @@
-package mc.enderbro3d.goldixapi.permissions;
+package mc.enderbro3d.goldixapi;
 
 import mc.enderbro3d.goldixapi.user.User;
 import org.bukkit.permissions.ServerOperator;

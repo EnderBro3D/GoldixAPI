@@ -1,7 +1,8 @@
-package mc.enderbro3d.goldixapi.database;
+package mc.enderbro3d.goldixapi.data;
 
 
-import mc.enderbro3d.goldixapi.data.Value;
+import mc.enderbro3d.goldixapi.data.values.Value;
+import org.intellij.lang.annotations.Language;
 
 import java.sql.*;
 import java.util.concurrent.*;
@@ -33,10 +34,10 @@ public class MySQLWorker {
      * @param params - Параметры
      * @return - Номер изменённой строки
      */
-    public static int execute(String sql, Object... params) {
+    public static int execute(boolean async, @Language(value = "MySQL") String sql, Object... params) {
         try {
             PreparedStatement statement = createStatement(sql, params);
-            return asyncTask(statement::executeUpdate).get();
+            return async ? asyncTask(statement::executeUpdate).get() : statement.executeUpdate();
         } catch(Exception e) {
             e.printStackTrace();
             return -1;
@@ -49,12 +50,11 @@ public class MySQLWorker {
      * @param params - Параметры
      * @return ResultSet
      */
-
-    public static ResultSet executeQuery(String sql, Object... params) {
+    public static ResultSet executeQuery(boolean async, @Language(value = "MySQL") String sql, Object... params) {
         try {
             PreparedStatement statement = createStatement(sql, params);
-            return asyncTask(statement::executeQuery).get();
-        } catch (InterruptedException | ExecutionException e) {
+            return async ? asyncTask(statement::executeQuery).get() : statement.executeQuery();
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -66,7 +66,7 @@ public class MySQLWorker {
      * @param params - Параметры
      * @return - Возвращает Statement
      */
-    public static PreparedStatement createStatement(String sql, Object... params) {
+    public static PreparedStatement createStatement(@Language(value = "MySQL") String sql, Object... params) {
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             for(int i = 0;i < params.length;i++) {

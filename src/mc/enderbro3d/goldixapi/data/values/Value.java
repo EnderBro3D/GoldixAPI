@@ -1,6 +1,6 @@
-package mc.enderbro3d.goldixapi.data;
+package mc.enderbro3d.goldixapi.data.values;
 
-public class Value {
+public class Value implements IVal {
     public Object value;
 
     public Value(Object value) {
@@ -17,38 +17,43 @@ public class Value {
     }
 
     public int integerValue() {
+        if(value == null) return 0;
         String s = stringValue();
-        if(s == null || s.equals("null")) return 0;
         return Integer.parseInt(s);
     }
 
     public short shortValue() {
+        if(value == null) return 0;
         String s = stringValue();
-        if(s == null || s.equals("null")) return 0;
         return Short.parseShort(s);
     }
 
     public long longValue() {
+        if(value == null) return 0;
         String s = stringValue();
-        if(s == null || s.equals("null")) return 0;
         return Long.parseLong(s);
     }
 
     public boolean booleanValue() {
+        if(value == null) return false;
         String s = stringValue();
-        if(s == null || s.equals("null")) return false;
         return Boolean.parseBoolean(s);
     }
 
     public float floatValue() {
+        if(value == null) return 0;
         String s = stringValue();
-        if(s == null || s.equals("null")) return 0;
         return Float.parseFloat(s);
     }
 
     public double doubleValue() {
+        if(value == null) return 0;
         String s = stringValue();
-        if(s == null || s.equals("null")) return 0;
         return Double.parseDouble(s);
+    }
+
+    @Override
+    public Object value() {
+        return value;
     }
 }

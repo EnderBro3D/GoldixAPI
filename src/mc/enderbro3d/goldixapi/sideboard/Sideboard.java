@@ -1,83 +1,110 @@
 package mc.enderbro3d.goldixapi.sideboard;
 
 
+import com.comphenix.packetwrapper.AbstractPacket;
+import com.comphenix.packetwrapper.WrapperPlayServerScoreboardDisplayObjective;
+import com.comphenix.packetwrapper.WrapperPlayServerScoreboardObjective;
+import com.comphenix.packetwrapper.WrapperPlayServerScoreboardScore;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.google.common.collect.Sets;
-import org.bukkit.Bukkit;
+import mc.enderbro3d.goldixapi.Main;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class Sideboard {
 
-    private static final ScoreboardManager manager = Bukkit.getScoreboardManager();
-
     private String title;
     private String name;
-    private Scoreboard scoreboard;
 
-    private Set<SideboardUpdater> updater = Sets.newConcurrentHashSet();
+    private Consumer<Player> timerUpdateAction;
+    private BiConsumer<SideboardSection<String>, Player> initAction;
+
+    public static final int SIDEBAR_POSITION = 0;
+
+    private static ConcurrentHashMap<Sideboard, Set<Player>> visibles = new ConcurrentHashMap<>();
 
     private ConcurrentHashMap<String, SideboardSection<String>> sections = new ConcurrentHashMap<>();
 
-    public Sideboard(String title, String name) {
+
+    /**
+     * Конструктор скорборда
+     * @param title Заглавление
+     * @param name Имя скорборда
+     * @param timerSpeed Скорость обновления
+     * @param initAction Вызывается, когда идёт обновление скорборда [Не по расписанию]
+     */
+    public Sideboard(String title, String name, int timerSpeed, BiConsumer<SideboardSection<String>, Player> initAction) {
+        this.initAction = initAction;
         this.title = title;
         this.name = name;
-        scoreboard();
-        update();
+        visibles.put(this, Sets.newConcurrentHashSet());
+
+
+        /*
+        Создаёт новый ранейбл, который обновляет скорборд раз в @timerSpeed
+         */
+        BukkitRunnable r = new BukkitRunnable() {
+            @Override
+            public void run() {
+                updateSideboard();
+            }
+        };
+        r.runTaskTimer(Main.getInstance(), 0L, timerSpeed);
     }
 
+
+
+    /**
+     * Заного отправляет пакет игроку
+     */
+    public void updateSideboard() {
+        visibles.get(this).forEach(this::setSideboard);
+    }
+
+    /**
+     * Добавляет новую секцию
+     * @param section Секция
+     */
     public void addSection(SideboardSection<String> section) {
         sections.put(section.getSectionName(), section);
-        update();
     }
 
+    /**
+     * Устанавливает заглавие для скорборда
+     * @param s Заглавие
+     */
     public void setTitle(String s) {
         title = s;
     }
 
+    /**
+     * Устанавливает функцию, которая выполняется во время обновления по расписанию
+     * @param timerUpdateAction функция
+     */
+    public void setTimerUpdateAction(Consumer<Player> timerUpdateAction) {
+        this.timerUpdateAction = timerUpdateAction;
+    }
+
+    /**
+     * Удаляет секцию
+     * @param section Секция
+     */
     public void removeSection(String section) {
         sections.remove(section);
-        update();
     }
 
-    public void update() {
-        if(name.length() > 16) name = name.substring(0, 16);
-        String s = "goldix_" + name;
-        if(s.length() > 16) s = s.substring(0, 16);
-        Objective obj = scoreboard.getObjective(s);
-        if(obj != null) obj.unregister();
-
-        Objective objective = scoreboard.registerNewObjective(s, name);
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.setDisplayName(title);
-
-
-
-        int sectionPos = 0;
-        int linePos = 0;
-
-        for(SideboardSection<String> section:sections.values()) {
-            objective.getScore("§7[" + section.getDisplay() + "§7]").setScore(-(sectionPos + linePos + 1));
-
-            for(SideboardLine<String> line:section.getLines().values()) {
-                String text = check(" " + line.getLine(), 40);
-                objective.getScore(text).setScore(-(sectionPos + linePos + 2));
-                linePos++;
-            }
-            sectionPos ++;
-        }
-        updater.forEach(u -> u.update(this));
-    }
-
-    public void addUpdater(SideboardUpdater u) {
-        updater.add(u);
-    }
-
+    /**
+     * Проверяет текст, если он длиннее i1, то сокращает, иначе
+     * оно добавляет пробелы к концу
+     * @param s Строка, которую надо проверить
+     * @param i1 Нужная длина
+     * @return
+     */
     public String check(String s, int i1) {
         if(s.length() > i1) s = s.substring(0, i1);
         StringBuilder append = new StringBuilder();
@@ -87,15 +114,94 @@ public class Sideboard {
         return s + append;
     }
 
-    public void setSideboard(Player player) {
-        player.setScoreboard(scoreboard);
+    /**
+     * Создаёт значение в Objective
+     * @param objective Объект в скорборде
+     * @param scoreName Имя значения
+     * @param value Число
+     * @return Пакет
+     */
+    private static AbstractPacket buildScore(String objective, String scoreName, int value) {
+        WrapperPlayServerScoreboardScore score = new WrapperPlayServerScoreboardScore();
+        score.setValue(value);
+        score.setScoreboardAction(EnumWrappers.ScoreboardAction.CHANGE);
+        score.setObjectiveName(objective);
+        score.setScoreName(scoreName);
+        return score;
     }
 
+    /**
+     * Создаёт новый объект в скорборде
+     * @param objective Имя объекта
+     * @param display Выводимое имя
+     * @return Пакет
+     */
+    private static AbstractPacket buildObjective(String objective, String display) {
+        WrapperPlayServerScoreboardObjective obj = new WrapperPlayServerScoreboardObjective();
+        obj.setDisplayName(display);
+        obj.setMode(WrapperPlayServerScoreboardObjective.Mode.ADD_OBJECTIVE);
+        obj.setName(objective);
+        return obj;
+    }
+
+    /**
+     * Создаёт пакет показа объекта
+     * @param objective Объект
+     * @return Пакет
+     */
+    private static AbstractPacket buildShow(String objective) {
+        WrapperPlayServerScoreboardDisplayObjective dobj = new WrapperPlayServerScoreboardDisplayObjective();
+        dobj.setPosition(SIDEBAR_POSITION);
+        dobj.setScoreName(objective);
+        return dobj;
+    }
+
+    /**
+     * Устанавливает Sideboard игроку
+     * @param player Игрок
+     */
+    public void setSideboard(Player player) {
+        buildObjective(name, title).sendPacket(player);
+
+        int sectionPos = 0;
+        int linePos = 0;
+
+        for(SideboardSection<String> section:sections.values()) {
+            initAction.accept(section, player);
+
+            buildScore(name, (check("§7[" + section.getDisplay() + "§7]", 32)), -(sectionPos + linePos + 1)).sendPacket(player);
+
+            for(SideboardLine<String> line:section.getLines().values()) {
+                buildScore(name, check(" " + line.getLine(), 32), -(sectionPos + linePos + 2)).sendPacket(player);
+                linePos++;
+            }
+            sectionPos ++;
+        }
+        buildShow(name).sendPacket(player);
+
+        Set<Player> players = visibles.get(this);
+        players.add(player);
+        visibles.put(this, players);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.toString().equals(obj.toString());
+    }
+
+
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    /**
+     * Ищет секцию по имени и возвращает её
+     * @param section Имя секции
+     * @return Секция
+     */
     public SideboardSection<String> getSection(String section) {
         return sections.get(section);
-    }
-
-    public void scoreboard() {
-        scoreboard = manager.getMainScoreboard();
     }
 }

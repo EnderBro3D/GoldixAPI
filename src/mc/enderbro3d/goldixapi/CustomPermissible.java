@@ -1,9 +1,8 @@
-package mc.enderbro3d.goldixapi.permissions;
+package mc.enderbro3d.goldixapi;
 
 import mc.enderbro3d.goldixapi.user.User;
 import mc.enderbro3d.goldixapi.utils.ReflectionUtil;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftHumanEntity;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissibleBase;
 import org.bukkit.permissions.Permission;

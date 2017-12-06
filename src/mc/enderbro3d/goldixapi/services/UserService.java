@@ -1,14 +1,16 @@
 package mc.enderbro3d.goldixapi.services;
 
 import mc.enderbro3d.goldixapi.events.AbstractEventListener;
-import mc.enderbro3d.goldixapi.permissions.CustomPermissible;
+import mc.enderbro3d.goldixapi.CustomPermissible;
 import mc.enderbro3d.goldixapi.user.GoldixUser;
 import mc.enderbro3d.goldixapi.user.OfflineUser;
 import mc.enderbro3d.goldixapi.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -17,17 +19,20 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 public class UserService implements Service {
 
+    private Listener userListener;
     private static ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
 
     public static void addUser(User user) {
         users.put(user.getName().toLowerCase(), user);
     }
 
-    public static void injectPlayer(Player player) {
-        User user = new GoldixUser(player);
+    public static void injectPlayer(String s) {
+        User user = new GoldixUser(s);
         addUser(user);
+    }
 
-        new CustomPermissible(user).inject(player);
+    public static void injectPlayer(Player p) {
+        injectPlayer(p.getName());
     }
 
     public static void removeUser(String s) {
@@ -36,6 +41,10 @@ public class UserService implements Service {
 
     public static User getUser(String s) {
         return users.get(s.toLowerCase());
+    }
+
+    public static User getUser(Player p) {
+        return getUser(p.getName());
     }
 
     public static User getOffline(String s) {
@@ -48,14 +57,19 @@ public class UserService implements Service {
     }
 
     @Override
-    public void registerService() {
+    public void enableService() {
         Bukkit.getOnlinePlayers()
                 .forEach(UserService::injectPlayer);
 
-        new AbstractEventListener() {
+        userListener = new AbstractEventListener() {
             @EventHandler
-            public void on(PlayerJoinEvent e) {
-                injectPlayer(e.getPlayer());
+            public void on(AsyncPlayerPreLoginEvent e) {
+                injectPlayer(e.getName());
+            }
+
+            @EventHandler
+            public void on(PlayerLoginEvent e) {
+                new CustomPermissible(getUser(e.getPlayer().getName())).inject(e.getPlayer());
             }
 
             @EventHandler
@@ -65,5 +79,11 @@ public class UserService implements Service {
                 removeUser(user.getName());
             }
         };
+    }
+
+    @Override
+    public void disableService() {
+        HandlerList.unregisterAll(userListener);
+        userListener = null;
     }
 }
