@@ -21,16 +21,22 @@ public class Data {
 
     /**
      * Устанавливает значение данных
-     * @param game
-     * @param type
-     * @param val
+     * @param key Ключ сервера
+     * @param type Значение, которое вы хотите установить
+     * @param val Значение
      */
-    public void setData(KeyType game, ValueType type, Value val) {
-        table.put(game, type, val);
+    public void setData(KeyType key, ValueType type, Value val) {
+        table.put(key, type, val);
     }
 
-    public Value getData(KeyType game, ValueType type) {
-        return table.get(game, type);
+    /**
+     *
+     * @param key Ключ
+     * @param type Значение
+     * @return Значение
+     */
+    public Value getData(KeyType key, ValueType type) {
+        return table.get(key, type);
     }
 
     public Data(User user) {
@@ -41,6 +47,9 @@ public class Data {
         this.name = name;
     }
 
+    /**
+     * Сохраняет данные
+     */
     public void save() {
         int bw_kills = getData(KeyType.BEDWARS, MinigameValueType.KILLS).integerValue();
         int bw_wins = getData(KeyType.BEDWARS, MinigameValueType.WINS).integerValue();
@@ -71,6 +80,9 @@ public class Data {
                 group, level, exp, balance, lang);
     }
 
+    /**
+     * Загружает данные
+     */
     public void load() {
         table.clear();
         try {
