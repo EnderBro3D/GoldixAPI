@@ -48,13 +48,15 @@ public class Sideboard {
         /*
         Создаёт новый ранейбл, который обновляет скорборд раз в @timerSpeed
          */
-        BukkitRunnable r = new BukkitRunnable() {
-            @Override
-            public void run() {
-                updateSideboard();
-            }
-        };
-        r.runTaskTimer(Main.getInstance(), 0L, timerSpeed);
+        if(timerSpeed != 0) {
+            BukkitRunnable r = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    updateSideboard();
+                }
+            };
+            r.runTaskTimer(Main.getInstance(), 0L, timerSpeed);
+        }
     }
 
 
