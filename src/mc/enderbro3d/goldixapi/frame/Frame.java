@@ -29,10 +29,17 @@ public class Frame implements Component {
 
     private AbstractEventListener listener;
 
+    /**
+     * Добавить клик - эвент
+     * @param e Эвент
+     */
     public void addAction(ActionEvent e) {
         actions.add(e);
     }
 
+    /**
+     * Проверяет число смотрящих, если их нет, удаляем листенер
+     */
     private void check() {
         if(inventory.getViewers().size() == 1 && listener != null) {
             HandlerList.unregisterAll(listener);
@@ -40,16 +47,31 @@ public class Frame implements Component {
         }
     }
 
+    /**
+     * Отрисовывает все кнопки в данном инвентаре
+     */
     public void drawAll() {
         buttons.values().forEach(btn -> btn.draw(inventory));
     }
 
+    /**
+     * Инициализирует инвентарь
+     */
     public void init() { }
 
+    /**
+     * Добавляет кнопку в данный инвентарь
+     * @param button Кнопка
+     */
     public void addButton(Button button) {
         this.buttons.put(button.getSlot(), button);
     }
 
+
+    /**
+     * Открывает фрейм игроку, если листенера нет - создаёт его
+     * @param player Игрок
+     */
     public void openFrame(Player player) {
         if(listener == null) {
             listener = new FrameEventListener();
@@ -57,6 +79,12 @@ public class Frame implements Component {
         player.openInventory(inventory);
     }
 
+    /**
+     * Конструктор фрейма
+     * @param name Имя фрейма
+     * @param title Заголовок фрейма
+     * @param rows
+     */
     public Frame(String name, String title, int rows) {
         this.name = name;
         this.title = title;
@@ -64,6 +92,11 @@ public class Frame implements Component {
         init();
     }
 
+    /**
+     * Возвращает кнопку в слоте
+     * @param i Слот
+     * @return Кнопка
+     */
     public Button getButtonAt(int i) {
         return buttons.get(i);
     }
@@ -84,6 +117,9 @@ public class Frame implements Component {
     }
 
 
+    /**
+     * Класс эвент листенера
+     */
     private class FrameEventListener extends AbstractEventListener {
         @EventHandler
         public void onClose(InventoryCloseEvent e) {

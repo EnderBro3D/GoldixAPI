@@ -31,6 +31,10 @@ public class Button implements DrawableComponent {
         updateMeta();
     }
 
+    /**
+     * Устанавливает слот кнопки
+     * @param slot Слот
+     */
     public void setSlot(int slot) {
         int oldSlot = this.slot;
         this.slot = slot;
@@ -40,10 +44,17 @@ public class Button implements DrawableComponent {
     }
 
 
+    /**
+     * Возвращает описание (он же лор)
+     * @return Описание
+     */
     public List<String> getDescription() {
         return description;
     }
 
+    /**
+     * Обновляет мету и отрисовывает в фрейме
+     */
     public void updateMeta() {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(text);
@@ -54,11 +65,19 @@ public class Button implements DrawableComponent {
         draw(frame.inventory);
     }
 
+    /**
+     * Устанавливает описание (он же лор)
+     * @param description Описание
+     */
     public void setDescription(String... description) {
         this.description = Arrays.asList(description);
         updateMeta();
     }
 
+    /**
+     * Устанавливает текст кнопки
+     * @param s Текст
+     */
     public void setText(String s) {
         this.text = s;
         updateMeta();

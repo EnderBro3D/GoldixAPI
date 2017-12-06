@@ -33,7 +33,7 @@ public class Sideboard {
 
     /**
      * Конструктор скорборда
-     * @param title Заглавление
+     * @param title Заголовок
      * @param name Имя скорборда
      * @param timerSpeed Скорость обновления
      * @param initAction Вызывается, когда идёт обновление скорборда [Не по расписанию]
@@ -79,7 +79,7 @@ public class Sideboard {
 
     /**
      * Устанавливает заглавие для скорборда
-     * @param s Заглавие
+     * @param s Заголовок
      */
     public void setTitle(String s) {
         title = s;
