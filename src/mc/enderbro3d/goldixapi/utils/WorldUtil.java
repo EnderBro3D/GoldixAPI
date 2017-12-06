@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 public class WorldUtil {
 
     private static ConcurrentHashMap<Player, Set<Block>> selectedBlocks = new ConcurrentHashMap<>();
-    private static ConcurrentHashMap<Player, Location[]> selectedPos = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Player, Selection> selectedPos = new ConcurrentHashMap<>();
     private static String LINE0 = "CREATE#%d;%d;%d#%d:%d", LINE1 = "WAIT#%d";
 
     /**
@@ -80,13 +80,13 @@ public class WorldUtil {
     public static void updateBlocks(Player p, BiConsumer<Set<Block>, int[]> onUpdate) {
         Runnable r = () -> {
             if (selectedPos.containsKey(p)) {
-                Location[] pos = selectedPos.get(p);
-                if(pos.length != 2) {
+                Selection select = selectedPos.get(p);
+                if(select.getLoc1() == null || select.getLoc2() == null) {
                     p.sendMessage("§aWorldEditor §8| §fТы должен выделить 2 точки");
                     return;
                 }
-                Location pos0 = pos[0];
-                Location pos1 = pos[1];
+                Location pos0 = select.getLoc1();
+                Location pos1 = select.getLoc2();
                 int maxX, minX, minY, minZ, maxZ, maxY;
 
                 if (pos1.getX() > pos0.getX()) {
@@ -149,8 +149,7 @@ public class WorldUtil {
     }
 
     public static Selection getSelection(Player p) {
-        Location[] loc = selectedPos.get(p);
-        return new Selection(loc[0], loc[1], p);
+        return selectedPos.get(p);
     }
 
     static {
@@ -165,20 +164,23 @@ public class WorldUtil {
                 Player p = e.getPlayer();
                 if(e.getItem() == null || e.getItem().getType() != Material.COMMAND) return;
                 Location[] loc = new Location[2];
-                if(selectedPos.containsKey(p))
-                    loc = selectedPos.get(p);
+                if(selectedPos.containsKey(p)) {
+                    Selection selection = selectedPos.get(p);
+                    loc[0] = selection.getLoc1();
+                    loc[1] = selection.getLoc2();
+                }
                 switch(e.getAction()) {
                     case LEFT_CLICK_BLOCK: {
                         p.sendMessage("§aWorldEditor §8| §fТочка 1 выделена");
                         loc[0] = e.getClickedBlock().getLocation();
-                        selectedPos.put(p, loc);
+                        selectedPos.put(p, new Selection(loc[0], loc[1], p));
                         e.setCancelled(true);
                         break;
                     }
                     case RIGHT_CLICK_BLOCK: {
                         p.sendMessage("§aWorldEditor §8| §fТочка 2 выделена");
                         loc[1] = e.getClickedBlock().getLocation();
-                        selectedPos.put(p, loc);
+                        selectedPos.put(p, new Selection(loc[0], loc[1], p));
                         e.setCancelled(true);
                         break;
                     }
