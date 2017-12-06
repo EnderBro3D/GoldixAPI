@@ -20,6 +20,11 @@ public class CommandService implements Service {
 
     private static HashMap<String, Command> commands = new HashMap<>();
 
+    /**
+     * Получить команду по имени
+     * @param name Имя
+     * @return Команда
+     */
     public static Command getCommandByName(String name) {
         return commands.get(name);
     }

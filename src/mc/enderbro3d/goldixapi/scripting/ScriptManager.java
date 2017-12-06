@@ -12,6 +12,11 @@ import java.io.FileReader;
 import java.util.concurrent.Executors;
 
 public class ScriptManager {
+    /**
+     * Запускает скрипт для игрока
+     * @param s Скрипт
+     * @param player Игрок
+     */
     public static void runScript(Script s, Player player) {
         Runnable r = () -> {
             try {

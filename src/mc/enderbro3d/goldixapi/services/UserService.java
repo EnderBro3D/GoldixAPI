@@ -28,6 +28,7 @@ public class UserService implements Service {
     private Listener userListener;
     private static ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
 
+
     public static void addUser(User user) {
         users.put(user.getName().toLowerCase(), user);
     }

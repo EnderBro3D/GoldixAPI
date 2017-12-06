@@ -9,6 +9,10 @@ public class Script {
         this.file = file;
     }
 
+    /**
+     * Возвращает файл скрипта
+     * @return Файл
+     */
     public File getFile() {
         return file;
     }

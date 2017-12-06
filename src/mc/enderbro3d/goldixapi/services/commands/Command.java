@@ -16,22 +16,42 @@ public abstract class Command {
         return getName();
     }
 
+    /**
+     * Добавить алиас
+     * @param alias Алиас
+     */
     public void addAlias(String alias) {
         aliases.add(alias);
     }
 
+    /**
+     * Удалить алиас
+     * @param alias Алиас
+     */
     public void removeAlias(String alias) {
         aliases.remove(alias);
     }
 
+    /**
+     * Получить все алиасы
+     * @return Алиасы
+     */
     public Set<String> getAliases() {
         return aliases;
     }
 
+    /**
+     * Возвращает имя
+     * @return Имя
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Возвращает уровень доступа, с которого доступна данная команда
+     * @return Уровень доступа
+     */
     public int getLevel() {
         return level;
     }
@@ -42,5 +62,11 @@ public abstract class Command {
         this.level = level;
     }
 
+    /**
+     * Абстрактный метод, который запускается, когда что-либо пишет команду
+     * @param sender Отправитель команды
+     * @param args Аргументы
+     * @throws Exception Все ошибки
+     */
     public abstract void execute(CommandSender sender, String[] args) throws Exception;
 }
