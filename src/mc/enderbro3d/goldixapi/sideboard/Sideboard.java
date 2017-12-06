@@ -52,7 +52,7 @@ public class Sideboard {
             BukkitRunnable r = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    timerUpdateAction.run();
+                    if(timerUpdateAction != null) timerUpdateAction.run();
                     updateSideboard();
                 }
             };
