@@ -1,6 +1,5 @@
 package mc.enderbro3d.goldixapi.services.languages;
 
-import mc.enderbro3d.goldixapi.Main;
 import mc.enderbro3d.goldixapi.services.Service;
 import mc.enderbro3d.goldixapi.services.UserService;
 import mc.enderbro3d.goldixapi.user.User;
@@ -10,37 +9,40 @@ import org.bukkit.entity.Player;
 
 public class LanguageService implements Service {
 
-    private LanguageData data;
+    private static LanguageData data;
 
-    public LanguageData getData() {
+    public static LanguageData getData() {
         return data;
     }
 
-    public String getLocalizedMessage(User u, String s) {
+    public static String getLocalizedMessage(User u, String s) {
         return getLocalizedMessage(u.getLanguage(), s);
     }
 
-    public String getLocalizedMessage(Language lang, String s) {
+    public static String getLocalizedMessage(Language lang, String s) {
         return data.getMessage(lang, s);
     }
 
-    public String getLocalizedMessage(CommandSender sender, String s) {
+    public static void sendMessage(CommandSender sender, String prefix, String s) {
+        sender.sendMessage(prefix + getLocalizedMessage(sender, s));
+    }
+
+    public static String getLocalizedMessage(CommandSender sender, String s) {
         Language lang = Language.EN;
         if (sender instanceof Player) lang = UserService.getUser((Player) sender).getLanguage();
-        String s1 = Main.getLanguage().getLocalizedMessage(lang, s);
+        String s1 = getLocalizedMessage(lang, s);
         if (s1 == null) s1 = s;
         return ChatColor.translateAlternateColorCodes('&',s1);
     }
 
-    @Override
-    public void enableService() {
+    static {
         data = new LanguageData();
-
-        data.load(true);
+        data.load();
     }
 
     @Override
-    public void disableService() {
-        data.unload();
-    }
+    public void enableService() {}
+
+    @Override
+    public void disableService() {}
 }

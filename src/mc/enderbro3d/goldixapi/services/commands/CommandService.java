@@ -12,7 +12,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -75,14 +74,21 @@ public class CommandService implements Service {
 
     @Override
     public void disableService() { }
-    
+
     static String toUpper(String s) {
         char first = Character.toUpperCase(s.charAt(0));
         return first + s.substring(1);
     }
 
     private static class CommandEventListener extends AbstractEventListener {
-        public boolean applicate(String command, CommandSender sender, boolean b) {
+        /**
+         * Выполняет команду
+         * @param command Команда
+         * @param sender Отправитель
+         * @param b Консоль
+         * @return Завершать ивент или нет
+         */
+        boolean applicate(String command, CommandSender sender, boolean b) {
             try {
                 String[] commandArray = command.split(" ");
                 String cmd = commandArray[0].toLowerCase();

@@ -22,33 +22,26 @@ public class UserGroup {
         return g;
     }
 
-    public static void saveGroups(boolean async) {
-        Runnable r = () -> groups.values().forEach(g -> g.save(async));
+    public static void saveGroups() {
+        groups.values().forEach(UserGroup::save);
 
-        if(async) Executors.newSingleThreadExecutor().execute(r);
-        else r.run();
     }
 
-    public static void loadGroups(boolean async) {
-        Runnable r = () -> {
-            groups.clear();
+    public static void loadGroups() {
+        groups.clear();
 
-            ResultSet rs = MySQLWorker.executeQuery(async, "SELECT * FROM `goldix`.`groups`");
-            while (MySQLWorker.next(rs)) {
-                String permissionsString = MySQLWorker.get(rs, "permissions").stringValue();
-                permissionsString = permissionsString.substring(1, permissionsString.length() - 1);
-                String[] permissions = permissionsString.split(", ");
-                makeGroup(
-                        MySQLWorker.get(rs, "level").integerValue(),
-                        MySQLWorker.get(rs, "name").stringValue(),
-                        MySQLWorker.get(rs, "display").stringValue(),
-                        MySQLWorker.get(rs, "prefix").stringValue(),
-                        permissions);
-            }
-        };
-
-        if(async) Executors.newSingleThreadExecutor().execute(r);
-        else r.run();
+        ResultSet rs = MySQLWorker.executeQuery(true, "SELECT * FROM `goldix`.`groups`");
+        while (MySQLWorker.next(rs)) {
+            String permissionsString = MySQLWorker.get(rs, "permissions").stringValue();
+            permissionsString = permissionsString.substring(1, permissionsString.length() - 1);
+            String[] permissions = permissionsString.split(", ");
+            makeGroup(
+                    MySQLWorker.get(rs, "level").integerValue(),
+                    MySQLWorker.get(rs, "name").stringValue(),
+                    MySQLWorker.get(rs, "display").stringValue(),
+                    MySQLWorker.get(rs, "prefix").stringValue(),
+                    permissions);
+        }
     }
 
     public static UserGroup getGroup(String group) {
@@ -88,11 +81,11 @@ public class UserGroup {
 
 
     static {
-        loadGroups(false);
+        loadGroups();
     }
 
-    public void save(boolean async) {
-        MySQLWorker.execute(async,"INSERT INTO `goldix`.`groups`(`name`, `prefix`, `level`, `display`, `permissions`) VALUES (?, ?, ?, ?, ?) " +
+    public void save() {
+        MySQLWorker.execute(true,"INSERT INTO `goldix`.`groups`(`name`, `prefix`, `level`, `display`, `permissions`) VALUES (?, ?, ?, ?, ?) " +
                 "ON DUPLICATE KEY UPDATE `prefix`=?, `level`=?, `display`=?, `permissions`=?", name, prefix, level, display, permissions.toString(),
                 prefix, level, display, permissions.toString());
     }

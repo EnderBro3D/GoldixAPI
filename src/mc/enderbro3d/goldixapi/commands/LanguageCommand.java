@@ -5,7 +5,7 @@ import mc.enderbro3d.goldixapi.services.UserService;
 import mc.enderbro3d.goldixapi.services.commands.Command;
 import mc.enderbro3d.goldixapi.services.languages.Language;
 import mc.enderbro3d.goldixapi.services.languages.LanguageData;
-import org.apache.commons.codec.language.bm.Lang;
+import mc.enderbro3d.goldixapi.services.languages.LanguageService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -22,11 +22,8 @@ public class LanguageCommand extends Command {
         sender.sendMessage(" §7§o* Пример: /language get ru no_perms");
         sender.sendMessage("§eУстанавливает вам язык §7- §a/language setlang [Язык]");
         sender.sendMessage(" §7§o* Пример: /language setlang ru");
-        sender.sendMessage("§eСохранить изменения §7- §a/language save [Асинхронность]");
-        sender.sendMessage(" §7§o* Пример: /language save true");
-        sender.sendMessage("§eЗаного загрузить данные из базы данных §7- §a/language load [Асинхронность]");
-        sender.sendMessage(" §7§o* Пример: /language load true");
-        sender.sendMessage(" §7§o* P.S Асинхронность более производительна при большом объёме данных");
+        sender.sendMessage("§eСохранить изменения §7- §a/language save");
+        sender.sendMessage("§eЗаного загрузить данные из базы данных §7- §a/language load");
     }
 
     @Override
@@ -36,7 +33,7 @@ public class LanguageCommand extends Command {
             return;
         }
 
-        LanguageData data = Main.getLanguage().getData();
+        LanguageData data = LanguageService.getData();
         switch(args[0].toLowerCase()) {
             case "set": {
                 if (args.length < 4) {
@@ -71,29 +68,15 @@ public class LanguageCommand extends Command {
                 break;
             }
             case "load": {
-                if (args.length < 2) {
-                    sender.sendMessage("§cLanguage §8| §fНедостаточно аргументов");
-                    return;
-                }
-                boolean async = Boolean.valueOf(args[1]);
-                long current = 0;
-                if(!async) current = System.currentTimeMillis();
-                sender.sendMessage("§aLanguage §8| §fНачинаем загрузку данных..." + (!async ? " Таймер запущен" : ""));
-                data.load(async);
-                sender.sendMessage("§aLanguage §8| §fЗагрузка данных завершена." + (!async ? " Таймер показывает " + (System.currentTimeMillis() - current) + "ms" : ""));
+                sender.sendMessage("§aLanguage §8| §fНачинаем загрузку данных...");
+                data.load();
+                sender.sendMessage("§aLanguage §8| §fЗагрузка данных завершена.");
                 break;
             }
             case "save": {
-                if (args.length < 2) {
-                    sender.sendMessage("§cLanguage §8| §fНедостаточно аргументов");
-                    return;
-                }
-                boolean async = Boolean.valueOf(args[1]);
-                long current = 0L;
-                if(!async) current = System.currentTimeMillis();
-                sender.sendMessage("§aLanguage §8| §fНачинаем сохранение данных..." + (!async ? " Таймер запущен" : ""));
-                data.save(async);
-                sender.sendMessage("§aLanguage §8| §fСохранение данных завершено." + (!async ? " Таймер показывает " + (System.currentTimeMillis() - current) + "ms" : ""));
+                sender.sendMessage("§aLanguage §8| §fНачинаем сохранение данных...");
+                data.save();
+                sender.sendMessage("§aLanguage §8| §fСохранение данных завершено.");
                 break;
             }
             default: {

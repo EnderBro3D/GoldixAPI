@@ -5,6 +5,11 @@ public enum Language {
     EN(1),
     DE(2);
 
+    /**
+     * Получить язык по айди
+     * @param i Айди
+     * @return Язык
+     */
     public static Language getLanguage(int i) {
         switch(i) {
             case 0: return RU;
@@ -19,6 +24,10 @@ public enum Language {
         this.id = id;
     }
 
+    /**
+     * Получить айди языка
+     * @return Айди
+     */
     public int getID() {
         return id;
     }

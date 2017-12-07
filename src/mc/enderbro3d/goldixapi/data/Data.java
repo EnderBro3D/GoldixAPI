@@ -2,7 +2,6 @@ package mc.enderbro3d.goldixapi.data;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import mc.enderbro3d.goldixapi.data.types.KeyType;
 import mc.enderbro3d.goldixapi.data.types.EverywhereValueType;
 import mc.enderbro3d.goldixapi.data.types.KeyType;
 import mc.enderbro3d.goldixapi.data.types.MinigameValueType;
@@ -12,7 +11,6 @@ import mc.enderbro3d.goldixapi.user.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.concurrent.Executors;
 
 public class Data {
     private Table<KeyType, ValueType, Value> table = HashBasedTable.create();

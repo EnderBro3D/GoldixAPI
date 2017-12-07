@@ -21,12 +21,7 @@ import java.sql.Connection;
 
 public class Main extends JavaPlugin {
     private static Main instance;
-    private static LanguageService language;
     private static AnticheatService anticheat;
-
-    public static LanguageService getLanguage() {
-        return language;
-    }
 
     private static Connection connection;
 
@@ -50,7 +45,7 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         anticheat.disableService();
-        language.getData().save(false);
+        LanguageService.getData().save();
         MySQLWorker.disconnect();
     }
 
@@ -102,8 +97,6 @@ public class Main extends JavaPlugin {
                 "`en` VARCHAR(48) DEFAULT 'lang_Err'," +
                 "`de` VARCHAR(48) DEFAULT 'lang_Err'," +
                 "PRIMARY KEY (`name`));");
-        language = new LanguageService();
-        language.enableService();
         WorldUtil.clearAll();
 
         new AbstractEventListener() {
