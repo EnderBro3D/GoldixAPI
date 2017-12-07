@@ -29,10 +29,19 @@ public class UserService implements Service {
     private static ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
 
 
+    /**
+     * Добавить пользователя
+     * @param user Пользователь
+     */
     public static void addUser(User user) {
         users.put(user.getName().toLowerCase(), user);
     }
 
+    /**
+     * Загрузить асинхронно данные пользователя
+     * @param u Пользователь
+     * @param load Функция, которая выполняется когда данные успешно загружены
+     */
     public static void loadAsynchronousData(User u, Consumer<Data> load) {
         try {
             Callable<Data> data = () -> {
@@ -47,15 +56,28 @@ public class UserService implements Service {
         }
     }
 
+    /**
+     * Загрузить синхронно данные пользователя
+     * @param u Пользователь
+     * @param load Функция, которая выполняется когда данные успешно загружены
+     */
     public static void loadSynchronousData(User u, Consumer<Data> load) {
         u.load();
         load.accept(u.getData());
     }
 
+    /**
+     * Синхронно сохранить данные пользователя
+     * @param u Пользователь
+     */
     public static void saveSynchronousData(User u) {
         u.save();
     }
 
+    /**
+     * Асинхронно сохранить данные пользователя
+     * @param u Пользователь
+     */
     public static void saveAsynchronousData(User u) {
         try {
             Runnable r = u::save;
@@ -66,6 +88,10 @@ public class UserService implements Service {
         }
     }
 
+    /**
+     * Сделать все важные функции для игрока, чтобы он полноценно стал пользователем
+     * @param p Игрок
+     */
     public static void injectPlayer(Player p) {
         User user = new GoldixUser(p);
         addUser(user);
@@ -73,23 +99,46 @@ public class UserService implements Service {
         loadAsynchronousData(user, (data) -> new CustomPermissible(user).inject(p));
     }
 
+    /**
+     * Удалить пользователя по его имени
+     * @param s Имя пользователя
+     */
     public static void removeUser(String s) {
         users.remove(s.toLowerCase());
     }
 
+    /**
+     * Возвращает пользователя
+     * @param s Имя
+     * @return Пользователь
+     */
     public static User getUser(String s) {
         return users.get(s.toLowerCase());
     }
 
+    /**
+     * Возвращает пользователя из игрока
+     * @param p Игрок
+     * @return Пользователь
+     */
     public static User getUser(Player p) {
         return getUser(p.getName());
     }
 
+    /**
+     * Возвращает оффлайн пользователя
+     * @param s Имя
+     * @return Оффлайн пользователь
+     */
     public static User getOffline(String s) {
         if(Bukkit.getPlayer(s) != null) return getUser(s);
         return new OfflineUser(s);
     }
 
+    /**
+     * Получает список всех пользователей
+     * @return Список пользователей
+     */
     public static Map<String, User> getUsers() {
         return users;
     }

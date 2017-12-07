@@ -34,6 +34,10 @@ public class AnticheatService implements Service {
 
     private static String FAKE_NAME;
 
+    /**
+     * Скрывает нагрудник
+     * @param p Игрок
+     */
     private static void sendHide(Player p) {
         PlayerInventory inv = p.getInventory();
         ItemStack chest = inv.getChestplate();
@@ -46,6 +50,10 @@ public class AnticheatService implements Service {
         e.sendPacket(p);
     }
 
+    /**
+     * Показывает нагрудник
+     * @param p Игрок
+     */
     private static void sendShow(Player p) {
         if (savedChestplates.containsKey(p)) {
             WrapperPlayServerEntityEquipment e = new WrapperPlayServerEntityEquipment();
@@ -116,6 +124,10 @@ public class AnticheatService implements Service {
     }
 
 
+    /**
+     * Проверяет игрока на Auto Armor
+     * @param player Игрок
+     */
     public void checkAutoarmor(Player player) {
 
         Runnable r = () -> {
@@ -164,9 +176,10 @@ public class AnticheatService implements Service {
         Executors.newSingleThreadExecutor().execute(r);
     }
 
-    
 
-
+    /**
+     * Запускает поток античита
+     */
     @Override
     public void enableService() {
         if(thread != null) disableService();
@@ -174,6 +187,9 @@ public class AnticheatService implements Service {
         thread.start();
     }
 
+    /**
+     * Отключает поток античита
+     */
     @Override
     public void disableService() {
         thread.stopAnticheat();
@@ -183,17 +199,23 @@ public class AnticheatService implements Service {
 
         private boolean run;
 
+        /**
+         * Отключает античит
+         */
         public void stopAnticheat() {
             run = false;
         }
 
+        /**
+         * Запускает античит
+         */
         public void run() {
             run = true;
             while(run) {
                 Bukkit.getOnlinePlayers()
                         .forEach(AnticheatService.this::checkAutoarmor);
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(1000 * 60);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -10,10 +10,18 @@ public class SideboardLine <T> {
         this.line = line;
     }
 
+    /**
+     * Возвращает линию
+     * @return Линию
+     */
     public T getLine() {
         return line;
     }
 
+    /**
+     * Возвращает секцию
+     * @return Секция
+     */
     public SideboardSection getSection() {
         return section;
     }
