@@ -29,16 +29,25 @@ public class CommandService implements Service {
         return commands.get(name);
     }
 
+    /**
+     * Получить команду по алиасу
+     * @param alias Алиас
+     * @return Команда
+     */
     public static Command getCommandByAlias(String alias) {
         try {
             return commands.values().stream()
                     .filter(command -> command.getAliases().contains(alias.toLowerCase()))
                     .collect(Collectors.toList()).get(0);
-        } catch(IndexOutOfBoundsException e) {
+        } catch(Exception e) {
             return null;
         }
     }
 
+    /**
+     * Регистрирует команду, если алиасы уже используются - удаляет их
+     * @param cmd Команда
+     */
     public static void registerCommand(Command cmd) {
         if(commands.containsKey(cmd.getName())) return;
         for(String alias:cmd.getAliases()) {
@@ -48,6 +57,10 @@ public class CommandService implements Service {
         commands.put(cmd.getName().toLowerCase(), cmd);
     }
 
+    /**
+     * Удаляет команду из списка регистрируемых
+     * @param cmd Команда
+     */
     public static void unregisterCommand(Command cmd) {
         if(!commands.containsKey(cmd.getName())) return;
         commands.remove(cmd.getName().toLowerCase());
@@ -62,8 +75,8 @@ public class CommandService implements Service {
 
     @Override
     public void disableService() { }
-
-    public static String toUpper(String s) {
+    
+    static String toUpper(String s) {
         char first = Character.toUpperCase(s.charAt(0));
         return first + s.substring(1);
     }
