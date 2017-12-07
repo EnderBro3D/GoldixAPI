@@ -11,6 +11,10 @@ public abstract class AbstractWordReplacer implements Replacer {
 
     private HashMap<String, Function<Player, String>> replacements = Maps.newHashMap();
 
+    /**
+     * Конструктор AbstractWordReplacer
+     * @param replacements Список чего заменять
+     */
     public AbstractWordReplacer(Map<String, Function<Player, String>> replacements) {
         this.replacements.putAll(replacements);
     }
