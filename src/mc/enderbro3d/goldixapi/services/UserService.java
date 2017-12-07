@@ -3,6 +3,7 @@ package mc.enderbro3d.goldixapi.services;
 import mc.enderbro3d.goldixapi.data.Data;
 import mc.enderbro3d.goldixapi.events.AbstractEventListener;
 import mc.enderbro3d.goldixapi.CustomPermissible;
+import mc.enderbro3d.goldixapi.services.languages.LanguageService;
 import mc.enderbro3d.goldixapi.user.GoldixUser;
 import mc.enderbro3d.goldixapi.user.OfflineUser;
 import mc.enderbro3d.goldixapi.user.User;
@@ -95,8 +96,12 @@ public class UserService implements Service {
     public static void injectPlayer(Player p) {
         User user = new GoldixUser(p);
         addUser(user);
+        p.sendMessage("§aData §8| §fЗагружаем твои данные...");
 
-        loadAsynchronousData(user, (data) -> new CustomPermissible(user).inject(p));
+        loadAsynchronousData(user, (data) -> {
+            new CustomPermissible(user).inject(p);
+            LanguageService.sendMessage(p, "§aData §8| ", "dataloaded");
+        });
     }
 
     /**

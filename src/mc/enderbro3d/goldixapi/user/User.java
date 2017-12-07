@@ -48,19 +48,27 @@ public interface User {
 
     /**
      * Устанавливает группу
-     * @param group - Группа
+     * @param group Группа
      */
     public void setGroup(UserGroup group);
 
     /**
      * Проверяет, есть ли у игрока право
-     * @param s - Право
+     * @param s Право
      * @return Имеет ли право игрок или нет. (true или false)
      */
     public boolean hasPermission(String s);
 
 
+    /**
+     * Добавляет право в группу игрока
+     * @param s Право
+     */
     public void addPermission(String s);
 
+    /**
+     * Удаляет право из группы игрока
+     * @param s Право
+     */
     public void removePermission(String s);
 }
