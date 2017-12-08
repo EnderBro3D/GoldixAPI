@@ -98,16 +98,5 @@ public class Main extends JavaPlugin {
                 "`de` VARCHAR(48) DEFAULT 'lang_Err'," +
                 "PRIMARY KEY (`name`));");
         WorldUtil.clearAll();
-
-        new AbstractEventListener() {
-            @EventHandler
-            public void test(PlayerJoinEvent e) {
-                Sideboard board = new Sideboard("§6Scoreboard §l[Beta]", "testboard", 60 * 20, (sect, p) -> sect.setLine(0, new SideboardLine<>(sect, "§aYour name is " + p.getName())));
-                SideboardSection<String> section = new SideboardSection<>(board, "testsection", "§aTesting");
-                section.addLine(new SideboardLine<>(section, "§eWelcome"));
-                board.addSection(section);
-                board.setSideboard(e.getPlayer());
-            }
-        };
     }
 }

@@ -153,25 +153,27 @@ public class UserService implements Service {
         Bukkit.getOnlinePlayers()
                 .forEach(UserService::injectPlayer);
 
-        userListener = new AbstractEventListener() {
-            @EventHandler
-            public void on(PlayerLoginEvent e) {
-                injectPlayer(e.getPlayer());
-            }
-
-
-            @EventHandler
-            public void on(PlayerQuitEvent e) {
-                User user = getUser(e.getPlayer().getName());
-                user.save();
-                removeUser(user.getName());
-            }
-        };
+        userListener = new UserServiceListener();
     }
 
     @Override
     public void disableService() {
         HandlerList.unregisterAll(userListener);
         userListener = null;
+    }
+
+    public class UserServiceListener extends AbstractEventListener {
+        @EventHandler
+        public void on(PlayerLoginEvent e) {
+            injectPlayer(e.getPlayer());
+        }
+
+
+        @EventHandler
+        public void on(PlayerQuitEvent e) {
+            User user = getUser(e.getPlayer().getName());
+            saveAsynchronousData(user);
+            removeUser(user.getName());
+        }
     }
 }
