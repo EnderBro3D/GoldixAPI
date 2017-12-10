@@ -52,6 +52,7 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         MySQLWorker.connect("root", "", "goldix", "localhost", 3306);
+        
         UserService service1 = new UserService();
         service1.enableService();
         anticheat = new AnticheatService();
@@ -59,44 +60,6 @@ public class Main extends JavaPlugin {
         CommandService.registerCommand(new LanguageCommand());
         CommandService.registerCommand(new TestCommand());
         CommandService.registerCommand(new PermissionsCommand());
-
-
-        MySQLWorker.execute(false,"CREATE TABLE IF NOT EXISTS `userdata`(" +
-                "`name` VARCHAR(16) NOT NULL," +
-                "`level` INT NOT NULL," +
-                "`exp` INT NOT NULL," +
-                "`balance` INT NOT NULL," +
-                "`group` VARCHAR(16) NOT NULL," +
-                "`lang` INT NOT NULL," +
-                "PRIMARY KEY (`name`));");
-
-        MySQLWorker.execute(false, "CREATE TABLE IF NOT EXISTS `bedwars_stats`(" +
-                "`name` VARCHAR(16) NOT NULL," +
-                "`kills` INT NOT NULL," +
-                "`deaths` INT NOT NULL," +
-                "`wins` INT NOT NULL," +
-                "`played` VARCHAR(16) NOT NULL," +
-                "PRIMARY KEY (`name`));");
-        MySQLWorker.execute(false,"CREATE TABLE IF NOT EXISTS `skywars_stats`(" +
-                "`name` VARCHAR(16) NOT NULL," +
-                "`kills` INT NOT NULL," +
-                "`deaths` INT NOT NULL," +
-                "`wins` INT NOT NULL," +
-                "`played` VARCHAR(16) NOT NULL," +
-                "PRIMARY KEY (`name`));");
-        MySQLWorker.execute(false, "CREATE TABLE IF NOT EXISTS `groups` (" +
-                "`name` VARCHAR(16) NOT NULL," +
-                "`prefix` VARCHAR(16) NOT NULL," +
-                "`display` VARCHAR(16) NOT NULL," +
-                "`level` INT NOT NULL," +
-                "`permissions` LONGTEXT NOT NULL," +
-                "PRIMARY KEY (`name`));");
-        MySQLWorker.execute(false, "CREATE TABLE IF NOT EXISTS `language` (" +
-                "`name` VARCHAR(16) NOT NULL," +
-                "`ru` VARCHAR(48) DEFAULT 'lang_Err'," +
-                "`en` VARCHAR(48) DEFAULT 'lang_Err'," +
-                "`de` VARCHAR(48) DEFAULT 'lang_Err'," +
-                "PRIMARY KEY (`name`));");
         WorldUtil.clearAll();
     }
 }

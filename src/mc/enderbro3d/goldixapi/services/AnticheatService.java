@@ -81,8 +81,6 @@ public class AnticheatService implements Service {
             @EventHandler
             public void on(InventoryClickEvent e) {
                 Player p = (Player) e.getWhoClicked();
-
-                System.out.println(checks.contains(p));
                 if(!checks.contains(p)) return;
                 ItemStack stack = e.getCurrentItem();
                 if(stack != null && stack.hasItemMeta() && stack.getItemMeta().hasDisplayName()
