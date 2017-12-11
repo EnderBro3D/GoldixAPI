@@ -96,7 +96,7 @@ public class UserService implements Service {
     public static void injectPlayer(Player p) {
         User user = new GoldixUser(p);
         addUser(user);
-        p.sendMessage("§aData §8| §fЗагружаем твои данные...");
+        p.sendMessage("§aData §8| §fЗагружаем ваши данные...");
 
         loadAsynchronousData(user, (data) -> {
             new CustomPermissible(user).inject(p);
@@ -158,6 +158,9 @@ public class UserService implements Service {
 
     @Override
     public void disableService() {
+        users.values().forEach(UserService::saveAsynchronousData);
+        users.clear();
+
         HandlerList.unregisterAll(userListener);
         userListener = null;
     }

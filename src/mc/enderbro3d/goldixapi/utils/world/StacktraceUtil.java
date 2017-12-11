@@ -1,10 +1,10 @@
-package mc.enderbro3d.goldixapi.utils;
+package mc.enderbro3d.goldixapi.utils.world;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 
-public class StacktraceWriter {
+public class StacktraceUtil {
     public static void writeToLog(String s, Throwable t) {
         try {
             File f = new File("err_logs", s + ".log");

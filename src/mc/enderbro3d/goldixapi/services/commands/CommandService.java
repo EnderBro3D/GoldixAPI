@@ -3,7 +3,7 @@ package mc.enderbro3d.goldixapi.services.commands;
 import mc.enderbro3d.goldixapi.events.AbstractEventListener;
 import mc.enderbro3d.goldixapi.services.Service;
 import mc.enderbro3d.goldixapi.services.UserService;
-import mc.enderbro3d.goldixapi.utils.StacktraceWriter;
+import mc.enderbro3d.goldixapi.utils.world.StacktraceUtil;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -112,7 +112,7 @@ public class CommandService implements Service {
                 return false;
             } catch(Exception e) {
                 String s = RandomStringUtils.randomAlphanumeric(8);
-                StacktraceWriter.writeToLog(s, e);
+                StacktraceUtil.writeToLog(s, e);
                 sender.sendMessage("§cОшибка во время выполнения команды\nПередайте администрации ключ: " + s);
                 return true;
             }

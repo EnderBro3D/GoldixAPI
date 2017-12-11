@@ -3,7 +3,7 @@ package mc.enderbro3d.goldixapi.commands;
 import mc.enderbro3d.goldixapi.scripting.Script;
 import mc.enderbro3d.goldixapi.scripting.ScriptManager;
 import mc.enderbro3d.goldixapi.services.commands.Command;
-import mc.enderbro3d.goldixapi.utils.WorldUtil;
+import mc.enderbro3d.goldixapi.utils.world.WorldUtil;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

@@ -1,8 +1,10 @@
-package mc.enderbro3d.goldixapi.utils;
+package mc.enderbro3d.goldixapi.utils.world;
 
 import mc.enderbro3d.goldixapi.Main;
 import mc.enderbro3d.goldixapi.events.AbstractEventListener;
 import mc.enderbro3d.goldixapi.scripting.Script;
+import mc.enderbro3d.goldixapi.utils.Selection;
+import mc.enderbro3d.goldixapi.utils.StringFormater;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
