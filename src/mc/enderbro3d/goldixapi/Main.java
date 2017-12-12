@@ -14,11 +14,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.sql.Connection;
 
 public class Main extends JavaPlugin {
+
     private static Main instance;
 
-    private UserService userService = new UserService();
+    private UserService userService;
 
-    private AnticheatService anticheatService = new AnticheatService();
+    private AnticheatService anticheatService;
 
     public static Main getInstance() {
         return instance;
@@ -26,6 +27,8 @@ public class Main extends JavaPlugin {
 
     public Main() {
         instance = this;
+        userService = new UserService();
+        anticheatService = new AnticheatService();
     }
 
 
@@ -52,4 +55,6 @@ public class Main extends JavaPlugin {
         CommandService.registerCommand(new PermissionsCommand());
         WorldUtil.clearAll();
     }
+
+
 }

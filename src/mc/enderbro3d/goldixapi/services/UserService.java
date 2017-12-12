@@ -1,8 +1,8 @@
 package mc.enderbro3d.goldixapi.services;
 
+import mc.enderbro3d.goldixapi.CustomPermissible;
 import mc.enderbro3d.goldixapi.data.Data;
 import mc.enderbro3d.goldixapi.events.AbstractEventListener;
-import mc.enderbro3d.goldixapi.CustomPermissible;
 import mc.enderbro3d.goldixapi.services.languages.LanguageService;
 import mc.enderbro3d.goldixapi.user.GoldixUser;
 import mc.enderbro3d.goldixapi.user.OfflineUser;
@@ -10,17 +10,15 @@ import mc.enderbro3d.goldixapi.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Map;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
@@ -94,6 +92,7 @@ public class UserService implements Service {
      * @param p Игрок
      */
     public static void injectPlayer(Player p) {
+        System.out.println("[" + p.getName() + "] Loading data...");
         User user = new GoldixUser(p);
         addUser(user);
         p.sendMessage("§aData §8| §fЗагружаем ваши данные...");
@@ -153,6 +152,7 @@ public class UserService implements Service {
         Bukkit.getOnlinePlayers()
                 .forEach(UserService::injectPlayer);
 
+        System.out.println("Enabling user service...");
         userListener = new UserServiceListener();
     }
 
@@ -166,8 +166,8 @@ public class UserService implements Service {
     }
 
     public class UserServiceListener extends AbstractEventListener {
-        @EventHandler
-        public void on(PlayerLoginEvent e) {
+        @EventHandler(priority = EventPriority.LOWEST)
+        public void on(PlayerJoinEvent e) {
             injectPlayer(e.getPlayer());
         }
 

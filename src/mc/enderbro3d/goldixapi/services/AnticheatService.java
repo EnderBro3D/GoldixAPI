@@ -76,49 +76,6 @@ public class AnticheatService implements Service {
                 RandomStringUtils.randomAlphanumeric(8));
         meta.setLore(lore);
         FAKE.setItemMeta(meta);
-
-        new AbstractEventListener() {
-            @EventHandler
-            public void on(InventoryClickEvent e) {
-                Player p = (Player) e.getWhoClicked();
-                if(!checks.contains(p)) return;
-                ItemStack stack = e.getCurrentItem();
-                if(stack != null && stack.hasItemMeta() && stack.getItemMeta().hasDisplayName()
-                        && stack.getItemMeta().getDisplayName().equals(FAKE_NAME)) {
-                    PlayerInventory inv = p.getInventory();
-
-                    savedItems.get(p).forEach(inv::setItem);
-
-                    e.setCancelled(true);
-
-                    p.kickPlayer("Autoarmor detected");
-
-                    savedItems.remove(p);
-                    savedChestplates.remove(p);
-                }
-            }
-
-            @EventHandler
-            public void on(PlayerQuitEvent e) {
-                Player p = e.getPlayer();
-                PlayerInventory inv = p.getInventory();
-                if(checks.contains(p)) {
-                    inv.setItem(9, BLANK);
-                    if(savedItems.containsKey(p)) savedItems.get(p).forEach(inv::setItem);
-                    checks.remove(p);
-                }
-            }
-
-            @EventHandler
-            public void on(PlayerDropItemEvent e) {
-                ItemStack stack = e.getItemDrop().getItemStack();
-                if(stack.hasItemMeta() && stack.getItemMeta().hasDisplayName()
-                        && stack.getItemMeta().getDisplayName().equals(FAKE_NAME)) {
-                    e.setCancelled(true);
-                }
-            }
-        };
-
     }
 
 
@@ -181,6 +138,49 @@ public class AnticheatService implements Service {
     @Override
     public void enableService() {
         if(thread != null) disableService();
+
+        new AbstractEventListener() {
+            @EventHandler
+            public void on(InventoryClickEvent e) {
+                Player p = (Player) e.getWhoClicked();
+                if(!checks.contains(p)) return;
+                ItemStack stack = e.getCurrentItem();
+                if(stack != null && stack.hasItemMeta() && stack.getItemMeta().hasDisplayName()
+                        && stack.getItemMeta().getDisplayName().equals(FAKE_NAME)) {
+                    PlayerInventory inv = p.getInventory();
+
+                    savedItems.get(p).forEach(inv::setItem);
+
+                    e.setCancelled(true);
+
+                    p.kickPlayer("Autoarmor detected");
+
+                    savedItems.remove(p);
+                    savedChestplates.remove(p);
+                }
+            }
+
+            @EventHandler
+            public void on(PlayerQuitEvent e) {
+                Player p = e.getPlayer();
+                PlayerInventory inv = p.getInventory();
+                if(checks.contains(p)) {
+                    inv.setItem(9, BLANK);
+                    if(savedItems.containsKey(p)) savedItems.get(p).forEach(inv::setItem);
+                    checks.remove(p);
+                }
+            }
+
+            @EventHandler
+            public void on(PlayerDropItemEvent e) {
+                ItemStack stack = e.getItemDrop().getItemStack();
+                if(stack.hasItemMeta() && stack.getItemMeta().hasDisplayName()
+                        && stack.getItemMeta().getDisplayName().equals(FAKE_NAME)) {
+                    e.setCancelled(true);
+                }
+            }
+        };
+
         thread = new AnticheatThread();
         thread.start();
     }

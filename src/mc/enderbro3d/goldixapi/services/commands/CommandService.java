@@ -94,9 +94,7 @@ public class CommandService implements Service {
                 String cmd = commandArray[0].toLowerCase();
                 if (!b) cmd = cmd.substring(1);
                 String[] args = new String[commandArray.length - 1];
-                for (int i = 0; i < args.length; i++) {
-                    args[i] = commandArray[i + 1];
-                }
+                System.arraycopy(commandArray, 1, args, 0, args.length);
 
                 Command cmd1 = getCommandByName(cmd);
                 if (cmd1 == null) cmd1 = getCommandByAlias(cmd);

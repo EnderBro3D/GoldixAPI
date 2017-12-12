@@ -16,17 +16,32 @@ public class UserGroup {
     private List<String> permissions = Lists.newArrayList();
     private String name, prefix, display;
 
+    /**
+     * Создаёт группу с определённым уровнем доступ, именем, префиксом и списком прав [Для других плагинов]
+     * @param level Уровень
+     * @param name Имя
+     * @param display Имя, которое будет показываться игрокам
+     * @param prefix Префикс
+     * @param permissions Права
+     * @return Группу
+     */
     public static UserGroup makeGroup(int level, String name, String display, String prefix, String... permissions) {
         UserGroup g = new UserGroup(level, name, display, prefix, permissions);
         groups.put(name.toLowerCase(), g);
         return g;
     }
 
+    /**
+     * Сохраняет все группы
+     */
     public static void saveGroups() {
         groups.values().forEach(UserGroup::save);
 
     }
 
+    /**
+     * Загружает все группы из ДБ
+     */
     public static void loadGroups() {
         groups.clear();
 
@@ -44,10 +59,20 @@ public class UserGroup {
         }
     }
 
+    /**
+     * Получает группу по имени
+     * @param group Имя
+     * @return Группа
+     */
     public static UserGroup getGroup(String group) {
         return groups.get(group.toLowerCase());
     }
 
+    /**
+     * Ищет все группы с определённым правом
+     * @param level Уровень
+     * @return Список групп
+     */
     public static List<UserGroup> findGroupByLevel(int level) {
         return groups.values()
                 .stream()
@@ -55,16 +80,30 @@ public class UserGroup {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Добавляет право в группу
+     * @param group Группа
+     * @param permission Право
+     */
     public static void addPermission(String group, String permission) {
         groups.get(group)
                 .addPermission(permission);
     }
 
+    /**
+     * Удаляет право из группы
+     * @param group Группа
+     * @param permission Право
+     */
     public static void removePermission(String group, String permission) {
         groups.get(group)
                 .removePermission(permission);
     }
 
+    /**
+     * Удаляет право
+     * @param permission Право
+     */
     public void removePermission(String permission) {
         permissions.remove(permission);
     }

@@ -1,25 +1,23 @@
 package mc.enderbro3d.goldixapi.events.users;
 
-import mc.enderbro3d.goldixapi.data.Data;
 import mc.enderbro3d.goldixapi.user.User;
 
 import java.net.InetAddress;
 
 public class UserDataLoadEvent extends UserEvent {
 
-    private Data data;
+    private InetAddress address;
 
-    public UserDataLoadEvent(User user, Data data) {
+    public UserDataLoadEvent(User user, InetAddress address) {
         super(user);
-        this.data = data;
+        this.address = address;
     }
 
-
     /**
-     * Возвращает данные, которые были загружены
-     * @return Данные
+     * Возвращает адрес пользователя
+     * @return Адрес
      */
-    public Data getData() {
-        return data;
+    public InetAddress getAddress() {
+        return address;
     }
 }
